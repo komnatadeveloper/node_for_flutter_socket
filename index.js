@@ -1,3 +1,4 @@
+const { Socket } = require('dgram');
 const ngrok =require('ngrok');
 const app = require('express')()
 const http = require('http').createServer(app)
@@ -22,15 +23,18 @@ socketio.on(
   (userSocket) => {
     console.log("Socket connected with socket id -> ", userSocket.id)
     userSocket.on("send_message", (data) => {
-      console.log(data)
+      console.log('userSocket.on -> "send_message" -> data -> ',  data)
+      // to other users
       userSocket.broadcast.emit("receive_message", data); 
+      // send back to user itself
       userSocket.emit(
         'send_message_sendback',
         {
-          message: "CALLBACK FROM SERVER"
+          // message: "CALLBACK FROM SERVER",
+          message: data,
         }
       );
-    })
+    });
   }
 );
 
@@ -42,11 +46,11 @@ http.listen(
 );
 
 
-ngrok.connect({
-    addr: 3000
-  })
-    .then( 
-      url => {
-        console.log('ngrok url -> ', url);
-      }
-    )
+// ngrok.connect({
+//     addr: 3000
+//   })
+//     .then( 
+//       url => {
+//         console.log('ngrok url -> ', url);
+//       }
+//     )
