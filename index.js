@@ -18,6 +18,25 @@ app.get('/', (req, res) => {
 
 //Socket Logic
 const socketio = require('socket.io')(http)
+
+
+// authentication documentation ->  https://socket.io/docs/v4/middlewares/
+// SOCKET.IO AUTHENTICATION MIDDLEWARE
+socketio.use((socket, next) => {
+  console.log('Socket.io middleware')
+  // console.log('socket.request -> ', socket.request)
+  console.log('socket.request._query -> ', socket.request._query)
+  console.log('socket.request._query.token -> ', socket.request._query.token)
+  // following "_verify" method is your verification. Imagine :)
+  const _verify = () => { return true; }
+  if ( _verify() ) {
+    next();
+  } else {
+    next(new Error("I didnt like your Authentication Parameters. Invalid!"));
+  }
+});
+
+
 socketio.on(
   "connection", 
   (userSocket) => {
